@@ -1,22 +1,16 @@
+#!/usr/local/bin/python3
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 import time
 import random
 
 
 class SouthwestCheckIn:
-    def __init__(self, confirmation_num, first_name, last_name):
+    def __init__(self, confirmation_num, first_name, last_name, number):
         self.confirmation_num = confirmation_num
         self.first_name = first_name
         self.last_name = last_name
-        options = Options()
-        options.add_experimental_option("prefs", {
-          "download.default_directory": r"C:\Users\xxx\downloads\Test",
-          "download.prompt_for_download": False,
-          "download.directory_upgrade": True,
-          "safebrowsing.enabled": True
-        })
-        self.driver = webdriver.Chrome(chrome_options=options)
+        self.number = number
+        self.driver = webdriver.Chrome()
         self.check_in_link = 'https://www.southwest.com/air/check-in/index.html'
 
     def check_in(self):
@@ -34,10 +28,28 @@ class SouthwestCheckIn:
 
         time.sleep(random.randint(2, 5) / 3)
 
+        confirm_btn = self.driver.find_element_by_class_name('air-check-in-review-results--check-in-button')
+        confirm_btn.click()
+
+    def send_pass(self):
+        text_btn = self.driver.find_element_by_class_name('boarding-pass-options--button-text')
+        text_btn.click()
+
+        number_input = self.driver.find_element_by_id('textBoardingPass')
+        number_confirmation = self.driver.find_element_by_id('textBoardingPassConfirmation')
+
+        number_input.send_keys(self.number)
+        number_confirmation.send_keys(self.number)
+
         confirm_btn = self.driver.find_element_by_id('form-mixin--submit-button')
         confirm_btn.click()
 
 
 if __name__ == '__main__':
-    checker = SouthwestCheckIn('123456', 'Yueyang', 'Ying')
+    checker = SouthwestCheckIn(
+        '',  # confirmation number
+        '',  # first name
+        '',  # last name
+        '')  # phone number
     checker.check_in()
+    checker.send_pass()
